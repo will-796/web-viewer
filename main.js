@@ -1,20 +1,38 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, globalShortcut } = require('electron')
+
+let win;
 
 function createWindow () {
-  const win = new BrowserWindow({
+    win = new BrowserWindow({
     width: 800,
     height: 600,
+    titleBarStyle: 'hidden',
+    frame: true,
+    alwaysOnTop: true,
     webPreferences: {
       nodeIntegration: true
     }
   })
-
-  win.loadURL('http://localhost:3000/')
-
-  win.webContents.openDevTools()
+  win.loadURL('http://google.com')
 }
 
-app.whenReady().then(createWindow)
+function toggleDevTools () {
+    win.webContents.toggleDevTools()
+}
+
+function closeWindow () {
+    win.close()
+}
+
+function createShotcuts(){
+    globalShortcut.register('CmdOrCtrl+J',toggleDevTools)
+    globalShortcut.register('CmdOrCtrl+Delete',closeWindow)
+}
+
+app.whenReady()
+.then(createWindow)
+.then(createShotcuts)
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
@@ -27,4 +45,7 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+
+
 
